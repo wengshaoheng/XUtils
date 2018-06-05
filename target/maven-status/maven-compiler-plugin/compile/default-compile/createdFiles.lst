@@ -1,0 +1,5 @@
+wsh\io\cfgutil\XConfKey.class
+wsh\io\cfgutil\XConfFile.class
+wsh\io\cfgutil\XConfFileSet.class
+wsh\io\cfgutil\XConfLoader.class
+wsh\io\cfgutil\XLoader.class
