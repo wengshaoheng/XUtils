@@ -1,4 +1,4 @@
-package wsh.io.cfgutil;
+package wsh.io.dl.conf;
 
 import java.io.InputStream;
 import java.util.HashMap;
@@ -8,6 +8,15 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import wsh.io.dl.XLoader;
+import wsh.io.dl.annotation.XConfFile;
+import wsh.io.dl.annotation.XConfFileSet;
+import wsh.io.dl.annotation.XConfKey;
+
+/**
+ * A properties configuration file loader 
+ * @author Shaoheng.Weng (Mars)
+ */
 public class XConfLoader extends XLoader {
 	
 	private static final Logger LOG = Logger.getLogger(XConfLoader.class.getName());
@@ -96,6 +105,53 @@ public class XConfLoader extends XLoader {
 	 */
 	public <T> T loadConfigBean(Class<T> beanClz) {
 		return loadConfigBean(beanClz, null);
+	}
+	
+	protected Object resolveToJavaMappingValue(Class<?> objClz, Object objValue) {
+		
+		String value = (String)objValue;
+		
+		if (value == null || (value = value.trim()).equals("")) {
+			return null;
+		}
+		
+		if (objClz == java.lang.Integer.class || objClz == int.class) {
+			return Integer.valueOf(value);
+		}
+		
+		if (objClz == java.lang.Long.class || objClz == long.class) {
+			return Long.valueOf(value);
+		}
+		
+		if (objClz == java.lang.Double.class || objClz == double.class) {
+			return Double.valueOf(value);
+		}
+		
+		if (objClz == java.lang.Float.class || objClz == float.class) {
+			return Double.valueOf(value);
+		}
+		
+		if (objClz == java.lang.Boolean.class || objClz == boolean.class) {
+			return Boolean.valueOf(value);
+		}
+		
+		if (objClz == java.lang.Short.class || objClz == short.class) {
+			return Short.valueOf(value);
+		}
+		
+		if (objClz == java.lang.Character.class || objClz == char.class) {
+			return value.charAt(0);
+		}
+		
+		if (objClz == java.math.BigInteger.class) {
+			return new java.math.BigInteger(value);
+		}
+		
+		if (objClz == java.math.BigDecimal.class) {
+			return new java.math.BigDecimal(value);
+		}
+		
+		return value;
 	}
 
 }

@@ -1,4 +1,4 @@
-package wsh.io.cfgutil;
+package wsh.io.dl;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -14,7 +14,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class XLoader {
+/**
+ * 
+ * @author Shaoheng.Weng (Mars)
+ */
+public abstract class XLoader {
 	
 	private static final Logger LOG = Logger.getLogger(XLoader.class.getName());
 	
@@ -74,7 +78,7 @@ public class XLoader {
 	}
 	
 	/**
-	 * 
+	 * resolve the specified annotation annotated 
 	 * @param annoClz
 	 * @param beanClz
 	 * @return List with element 
@@ -96,22 +100,22 @@ public class XLoader {
 	}
 	
 	/**
-	 * resolve the file source input stream
-	 * @param cfgFilePath
+	 * resolve the file source to an byte array input stream
+	 * @param filePath - the input file 
 	 */
-	protected InputStream resolveInputStream(String cfgFilePath) {
+	protected InputStream resolveInputStream(String filePath) {
 		
 		InputStream is = null;
 		
 		try {
-			if (cfgFilePath.startsWith("classpath:")) {
-				String path = cfgFilePath.substring(10);
+			if (filePath.startsWith("classpath:")) {
+				String path = filePath.substring(10);
 				is = this.getClass().getResourceAsStream(path);
-			} else if (cfgFilePath.startsWith("file://")) {
-				String path = cfgFilePath.substring(7);
+			} else if (filePath.startsWith("file://")) {
+				String path = filePath.substring(7);
 				is = new FileInputStream(path);
 			} else {
-				is = new FileInputStream(cfgFilePath);
+				is = new FileInputStream(filePath);
 			}
 			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -148,7 +152,7 @@ public class XLoader {
 			Field field   = beanObj.getClass().getDeclaredField(fieldName);
 			LOG.info("Field " + fieldName + " -> " + field.getType());
 			Method setter = beanObj.getClass().getDeclaredMethod(setterName, field.getType());
-			Object v = resolveValue(field.getType(), value);
+			Object v = resolveToJavaMappingValue(field.getType(), value);
 			setter.invoke(beanObj, v);
 		} catch (Exception e) {
 			LOG.severe("Failed to resolve the value for field ->" + fieldName);
@@ -159,50 +163,8 @@ public class XLoader {
 	/**
 	 * resolve the field value with the given type
 	 * @param objClz - the value's target type
-	 * @param value  - string value
+	 * @param rawValue  -  value hasn't been handled
 	 */
-	private Object resolveValue(Class<?> objClz, String value) {
-		if (value == null || (value = value.trim()).equals("")) {
-			return null;
-		}
-		
-		if (objClz == java.lang.Integer.class || objClz == int.class) {
-			return Integer.valueOf(value);
-		}
-		
-		if (objClz == java.lang.Long.class || objClz == long.class) {
-			return Long.valueOf(value);
-		}
-		
-		if (objClz == java.lang.Double.class || objClz == double.class) {
-			return Double.valueOf(value);
-		}
-		
-		if (objClz == java.lang.Float.class || objClz == float.class) {
-			return Double.valueOf(value);
-		}
-		
-		if (objClz == java.lang.Boolean.class || objClz == boolean.class) {
-			return Boolean.valueOf(value);
-		}
-		
-		if (objClz == java.lang.Short.class || objClz == short.class) {
-			return Short.valueOf(value);
-		}
-		
-		if (objClz == java.lang.Character.class || objClz == char.class) {
-			return value.charAt(0);
-		}
-		
-		if (objClz == java.math.BigInteger.class) {
-			return new java.math.BigInteger(value);
-		}
-		
-		if (objClz == java.math.BigDecimal.class) {
-			return new java.math.BigDecimal(value);
-		}
-		
-		return value;
-	}
+	protected abstract Object resolveToJavaMappingValue(Class<?> objClz, Object rawValue);
 	
 }
