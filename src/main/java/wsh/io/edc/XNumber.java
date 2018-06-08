@@ -9,6 +9,13 @@ import java.math.BigInteger;
  */
 public class XNumber {
 	
+	/**
+	 * 
+	 * @param numClz
+	 * @param data
+	 * @param offset
+	 * @return
+	 */
 	public static <T extends Number> T translateByteArrayToNumber(
 			Class<T> numClz, byte[] data, int offset) {
 
