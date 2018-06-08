@@ -9,8 +9,65 @@ import java.math.BigInteger;
  */
 public class XNumber {
 	
+	static  int AUTO_COPY_SIZE = -1;
+	
+	public static long byteArrayToLong(byte[] data) {
+		return byteArrayToLong(data, 0);
+	}
+	
+	public static long byteArrayToLong(byte[] data, int offset) {
+		return byteArrayToLong(data, offset, AUTO_COPY_SIZE);
+	}
+	
+	public static long byteArrayToLong(byte[] data, int offset, int size) {
+		return translateByteArrayToNumber(Long.class, data, offset, size);
+	}
+	
+	public static long byteArrayToInteger(byte[] data) {
+		return byteArrayToLong(data, 0);
+	}
+	
+	public static long byteArrayToInteger(byte[] data, int offset) {
+		return byteArrayToLong(data, offset, AUTO_COPY_SIZE);
+	}
+	
+	public static int byteArrayToInteger(byte[] data, int offset, int size) {
+		return translateByteArrayToNumber(Integer.class, data, offset, size);
+	}
+	
+	public static long byteArrayToBigInteger(byte[] data) {
+		return byteArrayToLong(data, 0);
+	}
+	
+	public static long byteArrayToBigInteger(byte[] data, int offset) {
+		return byteArrayToLong(data, offset, AUTO_COPY_SIZE);
+	}
+	
+	public static BigInteger byteArrayToBigInteger(byte[] data, int offset, int size) {
+		return translateByteArrayToNumber(BigInteger.class, data, offset, size);
+	}
+	
+	public static long byteArrayToShort(byte[] data) {
+		return byteArrayToLong(data, 0);
+	}
+	
+	public static long byteArrayToShort(byte[] data, int offset) {
+		return byteArrayToLong(data, offset, AUTO_COPY_SIZE);
+	}
+	
+	public static short byteArrayToShort(byte[] data, int offset, int size) {
+		return translateByteArrayToNumber(Short.class, data, offset, size);
+	}
+	
+	/**
+	 * 
+	 * @param numClz
+	 * @param data
+	 * @param offset
+	 * @return
+	 */
 	public static <T extends Number> T translateByteArrayToNumber(
-			Class<T> numClz, byte[] data, int offset) {
+			Class<T> numClz, byte[] data, int offset, int size) {
 
 		try {
 			if (numClz == Double.class || numClz == Float.class || numClz == BigDecimal.class) {
@@ -25,7 +82,7 @@ public class XNumber {
 					(Integer)numClz.getField("BYTES").get(dummyObj) : 
 					(Integer.MAX_VALUE / Integer.SIZE + 1);
 
-			int copySize = data.length - offset;
+			int copySize = (size == AUTO_COPY_SIZE) ? (data.length - offset) : size;
 			if (copySize < 1) return dummyObj;
 			if (copySize > _bytes) copySize = _bytes;
 			
